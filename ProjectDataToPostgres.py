@@ -86,3 +86,23 @@ cursor.close()
 conn.close()
 
 print("All done!")
+
+# Helper functions
+def table_recreate(cursor, tableName: str, tableFields: str ):
+     """ Takes the Connection , Table name and create Fields, will drop the table if exists and create it again with the desired fields Ex : table_recreate(cursor, payments,
+                    "(sessionId INT,
+                    itemInSession INT,
+                    artist TEXT,
+                    song TEXT,
+                    length FLOAT, 
+                    PRIMARY KEY (sessionId, itemInSession))")  """
+    try:
+        
+        cursor.execute("DROP TABLE IF EXISTS {0};".format(tableName))
+        query = f"CREATE TABLE {tableName} "
+        query = query + tableFields
+        cursor.execute(query)
+        print("Finished creating table {0}".format(tableName))
+    except psycopg2.Error as e: 
+    print(f"Error: Couldn't recreate the table: {tableName}, something went wrong")
+    print(e)
