@@ -3,5 +3,3 @@ link up the objects
 2x 3x 4x 5x 6x 7xs
 bYQBhLsr-5RhFq_ 
 pass for synp
-db tables to dataframe ! 
-does it keep it cleanning before moving to db ?! test
