@@ -67,4 +67,4 @@ CREATE TABLE FactMoney
     rider_id             INT NOT NULL,
     amount               MONEY NOT NULL
 )
-GO
+GO;
