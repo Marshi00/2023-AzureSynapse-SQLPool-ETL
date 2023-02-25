@@ -2,7 +2,7 @@
  
 <h1 align="center">
   <br>
-  <img src="images/cass.jpg"  width="1100">
+  <img src="images/Flow Chart.pdf"  width="1100">
   <br>
   Development Technologies 
   <br>
@@ -40,31 +40,37 @@ Bussiness Requirements :
 * Analytics per individuals and age groups
 * Analytics per individual trips and payments 
 
+> **Note**
+> Resources related to each step are divided into their respective folders.
+
 ## CodeFlow
 
 Step 0: Set up Azure Resources
 In this step, the necessary Azure resources for the project, including an Azure PostgreSQL database, an Azure Synapse workspace, and a Dedicated SQL Pool and database within the workspace, are created. Screenshots of each allocated resource are provided in the specific folder.
 
-Step 1: Move Data from CSV to Azure PostgreSQL
+Step 1: Move Data from CSV to Azure PostgreSQL <br>
 In this step, the data is cleaned, explored, and organized before finally being loaded into Azure PostgreSQL DB.
 
-Step 2: Design a Star Schema
+Step 2: Design a Star Schema <br>
 In this step, a relational star schema is designed per business requirements. Two fact tables to support analytics (Time-Trip) and (Time-Money) are utilized for performance, and time-sensitive dimensional tables up to seconds on Time-Trip and day precision on Time-Money are integrated to support the analysis. After designing the data, it is debugged, error-proofed, and tested in Azure PostgreSQL before migration.
 
-Step 3: Migrate from Azure PostgreSQL into Blob Storage
+Step 3: Migrate from Azure PostgreSQL into Blob Storage <br>
 In this step, the data is ingested into blob storage on a scheduled one-time pipeline that extracts the data from PostgreSQL via the ingest wizard in Azure Synapse workspace. Screenshots are provided.
 
-Step 4: Extract the Data from Blob Storage and Move to External Staging Tables in the Data Warehouse
+Step 4: Extract the Data from Blob Storage and Move to External Staging Tables in the Data Warehouse <br>
 In this step, SQL scripts in the Synapse Workspace load the data into external staging tables in the Dedicated SQL Pool.
 
-Step 5: Create the Star Schema
+Step 5: Create the Star Schema <br>
 SQL script will create the star schema.
 
-Step 6: Transform the Data to the Star Schema
+Step 6: Transform the Data to the Star Schema <br>
 SQL scripts are used to transform the data from the staging tables into the final star schema designed in Step 2.
 
 
 
+
+## How It Work
+Follow each step and requirments.txt 
 
 ## Credit
 Matt Swaffer : (https://www.linkedin.com/in/maswaffer/)
