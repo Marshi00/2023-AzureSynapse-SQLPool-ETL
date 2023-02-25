@@ -2,7 +2,7 @@
  
 <h1 align="center">
   <br>
-  <img src="images/Flow Chart.pdf"  width="1100">
+  <img src="images/gg1.jpg"  width="1100">
   <br>
   Development Technologies 
   <br>
