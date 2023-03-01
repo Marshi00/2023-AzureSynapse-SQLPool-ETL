@@ -1,17 +1,61 @@
-INSERT INTO dimDate (date_time, second, minute, hour, day, dayofweek, is_weekend, month, Quarter, Year)
-SELECT CAST(date_time AS DATETIME)                         AS date_time,
-       second 											   AS second,
-       minute 											   AS minute,
-       hour 											   AS hour,
-       day 											       AS day,
-       dayofweek 										   AS dayofweek,
-       is_weekend 										   AS is_weekend,
-       month        									   AS month,
-       Quarter 											   AS Quarter,
-       Year                                                AS Year
-FROM trip
+-- Define a temporary table to hold the calendar data
+CREATE TABLE #calendar_tmp (
+    DateTime DATETIME,
+    [second] SMALLINT,
+    [minute] SMALLINT,
+    [hour] SMALLINT,
+    [day] SMALLINT,
+    [dayofweek] SMALLINT,
+    [is_weekend] BIT,
+    [month] SMALLINT,
+    [Quarter] SMALLINT,
+    [Year] SMALLINT
+);
+
+-- Insert the calendar data into the temporary table
+INSERT INTO #calendar_tmp (DateTime, [second], [minute], [hour], [day], [dayofweek], [is_weekend], [month], [Quarter], [Year])
+SELECT
+    DateTime,
+    DATEPART(SECOND, DateTime) AS [second],
+    DATEPART(MINUTE, DateTime) AS [minute],
+    DATEPART(HOUR, DateTime) AS [hour],
+    DATEPART(DAY, DateTime) AS [day],
+    DATEPART(WEEKDAY, DateTime) AS [dayofweek],
+    CASE WHEN DATEPART(WEEKDAY, DateTime) > 4 THEN 1 ELSE 0 END AS [is_weekend],
+    DATEPART(MONTH, DateTime) AS [month],
+    DATEPART(QUARTER, DateTime) AS [Quarter],
+    DATEPART(YEAR, DateTime) AS [Year]
+FROM
+    (
+        SELECT TOP 1 CAST('2012-01-01 00:00:00' AS DATETIME2) AS DateTime FROM sys.objects
+        UNION ALL
+        SELECT DATEADD(SECOND, ROW_NUMBER() OVER (ORDER BY a.object_id) - 1, '2012-01-01 00:00:00') AS DateTime FROM sys.objects a, sys.objects b
+        WHERE DATEADD(SECOND, ROW_NUMBER() OVER (ORDER BY a.object_id) - 1, '2012-01-01 00:00:00') <= '2023-12-31 23:59:59'
+    ) AS DateTime;
+
+-- Create the final table with the calendar data
+CREATE TABLE IF NOT EXISTS dimDate (
+    DateTime DATETIME NOT NULL,
+    [second] SMALLINT,
+    [minute] SMALLINT,
+    [hour] SMALLINT,
+    [day] SMALLINT,
+    [dayofweek] SMALLINT,
+    [is_weekend] BIT,
+    [month] SMALLINT,
+    [Quarter] SMALLINT,
+    [Year] SMALLINT
+);
+
+-- Insert the data from the temporary table into the final table
+INSERT INTO dimDate (DateTime, [second], [minute], [hour], [day], [dayofweek], [is_weekend], [month], [Quarter], [Year])
+SELECT * FROM #calendar_tmp;
+
+-- Clean up the temporary table
+DROP TABLE #calendar_tmp;
 
 GO
+
 
 
 INSERT INTO dimRiders (rider_key, first_name, last_name, address, birthday, account_start_date, account_end_date, is_member)
@@ -54,8 +98,16 @@ SELECT t.trip_id                                            AS trip_key,
        t.start_station_id                                   AS start_station_id,
        t.end_station_id                                     AS end_station_id,
        t.rider_id                                           AS rider_id,
-       DATEDIFF_BIG(SECOND, t.start_at, CAST(r.birthday AS DATETIME)) AS age,
-       DATEDIFF_BIG(SECOND, t.ended_at, t.start_at)         AS age
+       (DATEDIFF(year, r.birthday,
+    CONVERT(Datetime, SUBSTRING([t.started_at], 1, 19),120)) - (
+        CASE WHEN MONTH(r.birthday) > MONTH(CONVERT(Datetime, SUBSTRING([t.started_at], 1, 19),120))
+        OR MONTH(r.birthday) =
+            MONTH(CONVERT(Datetime, SUBSTRING([t.started_at], 1, 19),120))
+        AND DAY(r.birthday) >
+            DAY(CONVERT(Datetime, SUBSTRING([t.started_at], 1, 19),120))
+        THEN 1 ELSE 0 END
+    ) AS age,
+       DATEDIFF_BIG(SECOND, t.ended_at, t.start_at)         AS trip_duration
 FROM trip t
 JOIN dimDate start ON ( start.date_time = t.start_at )
 JOIN dimDate stop ON ( stop.date_time = t.ended_at )

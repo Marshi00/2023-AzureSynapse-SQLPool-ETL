@@ -61,7 +61,7 @@ CREATE TABLE FactTrip
         start_station_id     VARCHAR(50) NOT NULL ,
         end_station_id       VARCHAR(50) NOT NULL ,
         rider_id             INT,
-        age_sec              BIGINT,
+        age                  BIGINT,
         trip_duration_sec    BIGINT
     );
 END
