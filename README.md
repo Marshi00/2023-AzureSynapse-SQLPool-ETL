@@ -52,7 +52,7 @@ Step 1: Move Data from CSV to Azure PostgreSQL <br>
 In this step, the data is cleaned, explored, and organized before finally being loaded into Azure PostgreSQL DB.
 
 Step 2: Design a Star Schema <br>
-In this step, a relational star schema is designed per business requirements. Two fact tables to support analytics (Time-Trip) and (Time-Money) are utilized for performance, and time-sensitive dimensional tables up to seconds on Time-Trip and day precision on Time-Money are integrated to support the analysis. After designing the data, it is debugged, error-proofed, and tested in Azure PostgreSQL before migration.
+In this step, a relational star schema is designed per business requirements. Two fact tables to support analytics (Trip) and (Payments) are utilized for performance, and time-sensitive dimensional tables up to seconds  precision  are integrated to support the analysis. After designing the data, it is debugged, error-proofed, and tested in Azure PostgreSQL before migration.
 
 Step 3: Migrate from Azure PostgreSQL into Blob Storage <br>
 In this step, the data is ingested into blob storage on a scheduled one-time pipeline that extracts the data from PostgreSQL via the ingest wizard in Azure Synapse workspace. Screenshots are provided.
